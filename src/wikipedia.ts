@@ -49,16 +49,7 @@ export class Wikipedia {
 		article: string,
 		property: string,
 	): Promise<string> {
-		const response = await Request.get("http://en.wikipedia.org/w/api.php", {
-			json: true,
-			qs: {
-				action: "parse",
-				format: "json",
-				page: article,
-				prop: property,
-				redirects: true,
-			},
-		});
+		const response = await Wikipedia.fetchResponse(article, property);
 		return response.parse[property]["*"];
 	}
 
@@ -66,7 +57,15 @@ export class Wikipedia {
 		article: string,
 		property: string,
 	): Promise<string[]> {
-		const response = await Request.get("http://en.wikipedia.org/w/api.php", {
+		const response = await Wikipedia.fetchResponse(article, property);
+		return response.parse[property].map((prop: any) => prop["*"]);
+	}
+
+	private static async fetchResponse(
+		article: string,
+		property: string,
+	): Promise<any> {
+		return Request.get("http://en.wikipedia.org/w/api.php", {
 			json: true,
 			qs: {
 				action: "parse",
@@ -76,6 +75,5 @@ export class Wikipedia {
 				redirects: true,
 			},
 		});
-		return response.parse[property].map((prop: any) => prop["*"]);
 	}
 }
