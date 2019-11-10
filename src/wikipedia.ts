@@ -5,7 +5,10 @@ type TrainingDataFetcher = () => Promise<string>;
 
 interface Article {
 	render: string;
-	fetchTrainingData: TrainingDataFetcher[];
+	trainingData: {
+		concurrency: number;
+		fetchers: TrainingDataFetcher[];
+	};
 }
 
 export class Wikipedia {
@@ -16,15 +19,18 @@ export class Wikipedia {
 			links: Wikipedia.fetchPluralProperty(header, "links"),
 			plainText: Wikipedia.fetchPlainText(header),
 		});
-		const fetchTrainingData = articleParts.links.map((link) => {
+		const fetchers = articleParts.links.map((link) => {
 			return () => {
 				return Wikipedia.fetchPlainText(link);
 			};
 		});
-		fetchTrainingData.unshift(() => Promise.resolve(articleParts.plainText));
+		fetchers.unshift(() => Promise.resolve(articleParts.plainText));
 		return {
-			fetchTrainingData,
 			render: articleParts.htmlText,
+			trainingData: {
+				concurrency: 1,
+				fetchers,
+			},
 		};
 	}
 
