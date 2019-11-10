@@ -55,7 +55,7 @@ class Plagiarise {
 
 	public stop(): void {
 		Plagiarise.log({
-			detail: [this.trainingData.length.toString(), "articles"].join(" "),
+			detail: `${this.trainingData.length.toString()} articles`,
 			headline: "Final statistics",
 		});
 		this.timeouts.forEach(clearInterval);
@@ -69,13 +69,12 @@ class Plagiarise {
 	private makeMonitor(): () => void {
 		return () => {
 			if (this.trainingData.length !== this.previousCount) {
+				const articles = this.trainingData.length.toString();
+				const newArticles = (
+					this.trainingData.length - this.previousCount
+				).toString();
 				Plagiarise.log({
-					detail: [
-						this.trainingData.length.toString(),
-						"articles,",
-						(this.trainingData.length - this.previousCount).toString(),
-						"new.",
-					].join(" "),
+					detail: `${articles} articles, ${newArticles} new.`,
 					headline: "Article statistics:",
 				});
 				this.previousCount = this.trainingData.length;

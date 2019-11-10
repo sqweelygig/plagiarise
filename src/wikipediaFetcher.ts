@@ -11,12 +11,12 @@ export async function fetchArticle(params: {
 	const htmlText = await fetchSingularProperty(params.header, "text");
 	params.updateRender(htmlText);
 	const plainText = parseHtmlText(htmlText);
-	params.appendTrainingData(plainText);
+	params.appendTrainingData(`${params.header}.  ${plainText}`);
 	const links = await fetchPluralProperty(params.header, "links");
 	await Bluebird.each(links, async (link) => {
 		try {
 			const linkedPlainText = await fetchPlainText(link);
-			params.appendTrainingData(linkedPlainText);
+			params.appendTrainingData(`${link}.  ${linkedPlainText}`);
 		} catch (error) {
 			params.reportError(error);
 		}
