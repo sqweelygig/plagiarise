@@ -2,7 +2,7 @@
   "name": "plagiarise",
   "version": "0.0.1",
   "description": "https://en.wikipedia.org/wiki/Plagiarism",
-  "main": "dist/index.js",
+  "main": "dist/plagiarise.js",
   "scripts": {
     "iterate": "npm run lint && rm -rf dist/ && npm run postinstall && node --version && npm run start",
     "lint": "yarn run lint_tslint && yarn run lint_prettier",

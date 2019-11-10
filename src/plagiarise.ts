@@ -1,17 +1,18 @@
-/* tslint:disable:no-console */
 import * as Bluebird from "bluebird";
 import * as Chalk from "chalk";
 import { fetchArticle as fetchWikipediaArticle } from "./wikipediaFetcher";
 
-class Plagarise {
+class Plagiarise {
 	private static log(params: {
 		error?: boolean;
 		headline: string;
 		detail?: string;
 	}): void {
+		/* tslint:disable:no-console */
 		const outputFunction = params.error
 			? console.error.bind(console)
 			: console.log.bind(console);
+		/* tslint:enable:no-console */
 		const headline = params.error
 			? Chalk.red(params.headline)
 			: Chalk.blue(params.headline);
@@ -21,14 +22,14 @@ class Plagarise {
 	}
 
 	private static updateRender(render: string): void {
-		Plagarise.log({
+		Plagiarise.log({
 			detail: render.split(/\n/, 1)[0],
 			headline: "Presenting article:",
 		});
 	}
 
 	private static reportError(error: Error): void {
-		Plagarise.log({
+		Plagiarise.log({
 			detail: error.message,
 			error: true,
 			headline: "Oh no!",
@@ -40,20 +41,20 @@ class Plagarise {
 	private readonly timeouts: NodeJS.Timeout[] = [];
 
 	public async start(): Promise<void> {
-		Plagarise.log({ headline: "Hello World!" });
+		Plagiarise.log({ headline: "Hello World!" });
 		this.startMonitor();
 		await Bluebird.props({
 			wikipedia: fetchWikipediaArticle({
 				appendTrainingData: this.makeDataAppender(),
 				header: "plagiarism",
-				reportError: Plagarise.reportError,
-				updateRender: Plagarise.updateRender,
+				reportError: Plagiarise.reportError,
+				updateRender: Plagiarise.updateRender,
 			}),
 		});
 	}
 
 	public stop(): void {
-		Plagarise.log({
+		Plagiarise.log({
 			detail: [this.trainingData.length.toString(), "articles"].join(" "),
 			headline: "Final statistics",
 		});
@@ -68,7 +69,7 @@ class Plagarise {
 	private makeMonitor(): () => void {
 		return () => {
 			if (this.trainingData.length !== this.previousCount) {
-				Plagarise.log({
+				Plagiarise.log({
 					detail: [
 						this.trainingData.length.toString(),
 						"articles,",
@@ -84,7 +85,7 @@ class Plagarise {
 
 	private makeDataAppender(): (newData: string) => void {
 		return (newData: string) => {
-			Plagarise.log({
+			Plagiarise.log({
 				detail: newData.split(/\n/, 1)[0],
 				headline: "Learnt article:",
 			});
@@ -93,5 +94,7 @@ class Plagarise {
 	}
 }
 
-const plagiarise = new Plagarise();
-plagiarise.start().then(plagiarise.stop);
+const plagiarise = new Plagiarise();
+plagiarise.start().then(() => {
+	plagiarise.stop();
+});
