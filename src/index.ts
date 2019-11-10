@@ -33,32 +33,34 @@ async function start(): Promise<NodeJS.Timeout[]> {
 			previousCount = trainingData.length;
 		}
 	}, 5000);
-	const plagiarismArticles = await Bluebird.props({
-		wikipedia: fetchWikipediaArticle("plagiarism"),
+	const updateRender = (render: string) => {
+		log({
+			detail: render.split(/\n/, 1)[0],
+			headline: "Presenting article:",
+		});
+	};
+	const reportError = (error: Error) => {
+		log({
+			detail: error.message,
+			error: true,
+			headline: "Oh no!",
+		});
+	};
+	const appendTrainingData = (newData: string) => {
+		log({
+			detail: newData.split(/\n/, 1)[0],
+			headline: "Learnt article:",
+		});
+		trainingData.push(newData);
+	};
+	await Bluebird.props({
+		wikipedia: fetchWikipediaArticle({
+			appendTrainingData,
+			header: "plagiarism",
+			reportError,
+			updateRender,
+		}),
 	});
-	log({
-		detail: plagiarismArticles.wikipedia.render.split(/\n/, 1)[0],
-		headline: "Presenting article:",
-	});
-	await Bluebird.each(
-		plagiarismArticles.wikipedia.trainingData.fetchers,
-		async (fetcher) => {
-			try {
-				const article = await fetcher();
-				log({
-					detail: article.split(/\n/, 1)[0],
-					headline: "Learnt article:",
-				});
-				trainingData.push(article);
-			} catch (error) {
-				log({
-					detail: error.message,
-					error: true,
-					headline: "Oh no!",
-				});
-			}
-		},
-	);
 	log({
 		detail: [trainingData.length.toString(), "articles"].join(" "),
 		headline: "Final statistics",

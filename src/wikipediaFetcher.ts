@@ -2,46 +2,39 @@ import * as Bluebird from "bluebird";
 import * as HtmlToText from "html-to-text";
 import * as Request from "request-promise";
 
-type TrainingDataFetcher = () => Promise<string>;
-
-interface Article {
-	render: string;
-	trainingData: {
-		concurrency: number;
-		// TODO Consider whether to do this via callback with each data source handling its own concurrency?
-		fetchers: TrainingDataFetcher[];
-	};
+export async function fetchArticle(params: {
+	header: string;
+	updateRender: (render: string) => void;
+	appendTrainingData: (trainingData: string) => void;
+	reportError: (error: Error) => void;
+}): Promise<void> {
+	const htmlText = await fetchSingularProperty(params.header, "text");
+	params.updateRender(htmlText);
+	const plainText = parseHtmlText(htmlText);
+	params.appendTrainingData(plainText);
+	const links = await fetchPluralProperty(params.header, "links");
+	await Bluebird.each(links, async (link) => {
+		try {
+			const linkedPlainText = await fetchPlainText(link);
+			params.appendTrainingData(linkedPlainText);
+		} catch (error) {
+			params.reportError(error);
+		}
+	});
 }
 
-export async function fetchArticle(header: string): Promise<Article> {
-	const articleParts = await Bluebird.props({
-		htmlText: fetchSingularProperty(header, "text"),
-		links: fetchPluralProperty(header, "links"),
-		plainText: fetchPlainText(header),
-	});
-	const fetchers = articleParts.links.map((link) => {
-		return () => {
-			return fetchPlainText(link);
-		};
-	});
-	fetchers.unshift(() => Promise.resolve(articleParts.plainText));
-	return {
-		render: articleParts.htmlText,
-		trainingData: {
-			concurrency: 1,
-			fetchers,
-		},
-	};
-}
-
-async function fetchPlainText(article: string): Promise<string> {
-	const htmlText = await fetchSingularProperty(article, "text");
+function parseHtmlText(htmlText: string): string {
 	return HtmlToText.fromString(htmlText, {
 		ignoreHref: true,
 		ignoreImage: true,
 		uppercaseHeadings: false,
 		wordwrap: false,
 	}).trim();
+}
+
+async function fetchPlainText(article: string): Promise<string> {
+	const htmlText = await fetchSingularProperty(article, "text");
+	return parseHtmlText(htmlText);
 }
 
 async function fetchSingularProperty(
