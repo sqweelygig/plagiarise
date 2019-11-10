@@ -10,10 +10,12 @@ function log(params: { error?: boolean; headline: string; detail?: string }) {
 	const headline = params.error
 		? Chalk.red(params.headline)
 		: Chalk.blue(params.headline);
-	outputFunction(headline, params.detail);
+	params.detail
+		? outputFunction(headline, params.detail)
+		: outputFunction(headline);
 }
 
-async function start(): Promise<void> {
+async function start(): Promise<NodeJS.Timeout[]> {
 	log({ headline: "Hello World!" });
 	const trainingData = [];
 	let previousCount = 0;
@@ -61,7 +63,11 @@ async function start(): Promise<void> {
 		detail: [trainingData.length.toString(), "articles"].join(" "),
 		headline: "Final statistics",
 	});
+	return [monitor];
 }
-start().then(() => {
-	/* do nothing */
-});
+
+function stop(timeout: NodeJS.Timeout[]): void {
+	timeout.forEach(clearInterval);
+}
+
+start().then(stop);
