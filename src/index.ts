@@ -1,30 +1,37 @@
 /* tslint:disable:no-console */
 import * as Bluebird from "bluebird";
+import * as Chalk from "chalk";
+import { compact } from "lodash";
 import { Wikipedia } from "./wikipedia";
 
 async function start(): Promise<void> {
-	console.log("================");
-	console.log("Hello World!");
-	console.log("----------------");
+	console.log(Chalk.blue("Hello World!"));
 	const plagiarism = await Bluebird.props({
 		wikipedia: Wikipedia.fetchArticle("plagiarism"),
 	});
 	console.log(
-		plagiarism.wikipedia.render.length,
-		plagiarism.wikipedia.render.substr(0, 1500),
+		Chalk.blue("Presenting article:"),
+		plagiarism.wikipedia.render.split(/\n/, 1)[0],
 	);
-	const trainingData = await Bluebird.map(
-		plagiarism.wikipedia.trainingData.fetchers,
-		(fetcher) => {
-			return fetcher();
-		},
-		{
-			concurrency: plagiarism.wikipedia.trainingData.concurrency,
-		},
+	const trainingData = compact(
+		await Bluebird.map(
+			plagiarism.wikipedia.trainingData.fetchers,
+			async (fetcher) => {
+				try {
+					const article = await fetcher();
+					console.log(Chalk.blue("Learnt article:"), article.split(/\n/, 1)[0]);
+					return article;
+				} catch (error) {
+					console.error(Chalk.red("Oh no!"), error.message);
+					return null;
+				}
+			},
+			{
+				concurrency: plagiarism.wikipedia.trainingData.concurrency,
+			},
+		),
 	);
-	console.log("----------------");
-	console.log(trainingData.length, trainingData[0].split("\n", 1)[0]);
-	console.log("================");
+	console.log(Chalk.blue("Article count:"), trainingData.length.toString());
 }
 start().then(() => {
 	/* do nothing */

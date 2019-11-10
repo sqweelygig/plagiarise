@@ -8,6 +8,7 @@ interface Article {
 	render: string;
 	trainingData: {
 		concurrency: number;
+		// TODO Consider whether to do this via callback with each data source handling its own concurrency?
 		fetchers: TrainingDataFetcher[];
 	};
 }
