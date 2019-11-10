@@ -24,12 +24,13 @@ export async function fetchArticle(params: {
 }
 
 function parseHtmlText(htmlText: string): string {
-	return HtmlToText.fromString(htmlText, {
+	const text = HtmlToText.fromString(htmlText, {
 		ignoreHref: true,
 		ignoreImage: true,
 		uppercaseHeadings: false,
 		wordwrap: false,
-	}).trim();
+	});
+	return text.replace(/\[\d+]/g, "").trim();
 }
 
 async function fetchPlainText(article: string): Promise<string> {
