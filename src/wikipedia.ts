@@ -1,4 +1,5 @@
 import * as Bluebird from "bluebird";
+import * as HtmlToText from "html-to-text";
 import * as Request from "request-promise";
 
 type TrainingDataFetcher = () => Promise<string>;
@@ -34,7 +35,13 @@ export class Wikipedia {
 	}
 
 	private static async fetchPlainText(article: string): Promise<string> {
-		return Wikipedia.fetchSingularProperty(article, "wikitext");
+		const htmlText = await Wikipedia.fetchSingularProperty(article, "text");
+		return HtmlToText.fromString(htmlText, {
+			ignoreHref: true,
+			ignoreImage: true,
+			uppercaseHeadings: false,
+			wordwrap: false,
+		}).trim();
 	}
 
 	private static async fetchSingularProperty(

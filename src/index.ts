@@ -3,7 +3,9 @@ import * as Bluebird from "bluebird";
 import { Wikipedia } from "./wikipedia";
 
 async function start(): Promise<void> {
+	console.log("================");
 	console.log("Hello World!");
+	console.log("----------------");
 	const plagiarism = await Bluebird.props({
 		wikipedia: Wikipedia.fetchArticle("plagiarism"),
 	});
@@ -13,16 +15,16 @@ async function start(): Promise<void> {
 	);
 	const trainingData = await Bluebird.map(
 		plagiarism.wikipedia.trainingData.fetchers,
-		async (fetcher, index) => {
-			const data = await fetcher();
-			console.log(index, data.split("\n", 1)[0]);
-			return data;
+		(fetcher) => {
+			return fetcher();
 		},
 		{
 			concurrency: plagiarism.wikipedia.trainingData.concurrency,
 		},
 	);
-	console.log(trainingData.length);
+	console.log("----------------");
+	console.log(trainingData.length, trainingData[0].split("\n", 1)[0]);
+	console.log("================");
 }
 start().then(() => {
 	/* do nothing */
