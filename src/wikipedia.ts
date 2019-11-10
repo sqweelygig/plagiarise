@@ -12,8 +12,7 @@ interface Article {
 }
 
 export class Wikipedia {
-	public static async fetchArticle(headers: string[]): Promise<Article> {
-		const header = headers[headers.length - 1];
+	public static async fetchArticle(header: string): Promise<Article> {
 		const articleParts = await Bluebird.props({
 			htmlText: Wikipedia.fetchSingularProperty(header, "text"),
 			links: Wikipedia.fetchPluralProperty(header, "links"),

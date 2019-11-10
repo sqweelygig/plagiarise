@@ -5,7 +5,7 @@ import { Wikipedia } from "./wikipedia";
 async function start(): Promise<void> {
 	console.log("Hello World!");
 	const plagiarism = await Bluebird.props({
-		wikipedia: Wikipedia.fetchArticle(["plagiarism"]),
+		wikipedia: Wikipedia.fetchArticle("plagiarism"),
 	});
 	console.log(
 		plagiarism.wikipedia.render.length,
