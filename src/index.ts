@@ -1,7 +1,7 @@
 /* tslint:disable:no-console */
 import * as Bluebird from "bluebird";
 import * as Chalk from "chalk";
-import { Wikipedia } from "./wikipedia";
+import { WikipediaFetcher } from "./wikipediaFetcher";
 
 function log(params: { error?: boolean; headline: string; detail?: string }) {
 	const outputFunction = params.error
@@ -34,7 +34,7 @@ async function start(): Promise<NodeJS.Timeout[]> {
 		}
 	}, 5000);
 	const plagiarismArticles = await Bluebird.props({
-		wikipedia: Wikipedia.fetchArticle("plagiarism"),
+		wikipedia: WikipediaFetcher.fetchArticle("plagiarism"),
 	});
 	log({
 		detail: plagiarismArticles.wikipedia.render.split(/\n/, 1)[0],

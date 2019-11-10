@@ -13,16 +13,16 @@ interface Article {
 	};
 }
 
-export class Wikipedia {
+export class WikipediaFetcher {
 	public static async fetchArticle(header: string): Promise<Article> {
 		const articleParts = await Bluebird.props({
-			htmlText: Wikipedia.fetchSingularProperty(header, "text"),
-			links: Wikipedia.fetchPluralProperty(header, "links"),
-			plainText: Wikipedia.fetchPlainText(header),
+			htmlText: WikipediaFetcher.fetchSingularProperty(header, "text"),
+			links: WikipediaFetcher.fetchPluralProperty(header, "links"),
+			plainText: WikipediaFetcher.fetchPlainText(header),
 		});
 		const fetchers = articleParts.links.map((link) => {
 			return () => {
-				return Wikipedia.fetchPlainText(link);
+				return WikipediaFetcher.fetchPlainText(link);
 			};
 		});
 		fetchers.unshift(() => Promise.resolve(articleParts.plainText));
@@ -36,7 +36,10 @@ export class Wikipedia {
 	}
 
 	private static async fetchPlainText(article: string): Promise<string> {
-		const htmlText = await Wikipedia.fetchSingularProperty(article, "text");
+		const htmlText = await WikipediaFetcher.fetchSingularProperty(
+			article,
+			"text",
+		);
 		return HtmlToText.fromString(htmlText, {
 			ignoreHref: true,
 			ignoreImage: true,
@@ -49,7 +52,7 @@ export class Wikipedia {
 		article: string,
 		property: string,
 	): Promise<string> {
-		const response = await Wikipedia.fetchResponse(article, property);
+		const response = await WikipediaFetcher.fetchResponse(article, property);
 		return response.parse[property]["*"];
 	}
 
@@ -57,7 +60,7 @@ export class Wikipedia {
 		article: string,
 		property: string,
 	): Promise<string[]> {
-		const response = await Wikipedia.fetchResponse(article, property);
+		const response = await WikipediaFetcher.fetchResponse(article, property);
 		return response.parse[property].map((prop: any) => prop["*"]);
 	}
 
