@@ -26,9 +26,13 @@ class Plagiarise {
 			: outputFunction(headline);
 	}
 
-	private static updateRender(render: string): void {
+	private static updateRender(
+		render: string,
+		location: number | undefined,
+	): void {
+		const firstLine = render.split(/\n/, 1)[0];
 		Plagiarise.log({
-			detail: render.split(/\n/, 1)[0],
+			detail: `${location} ${firstLine}`,
 			headline: "Presenting article:",
 		});
 	}
