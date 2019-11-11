@@ -12,7 +12,7 @@ export async function fetchArticle(params: {
 	const header = params.textEditorProps.title;
 	const htmlText = await fetchSingularProperty(header, "text");
 	params.updateRender(htmlText, 0);
-	const plainText = parseHtmlText(htmlText);
+	const plainText = await fetchPlainText(header);
 	params.appendTrainingData(`${header}.  ${plainText}`);
 	const links = await fetchPluralProperty(header, "links");
 	await Bluebird.each(links, async (link) => {
@@ -37,7 +37,8 @@ function parseHtmlText(htmlText: string): string {
 
 async function fetchPlainText(article: string): Promise<string> {
 	const htmlText = await fetchSingularProperty(article, "text");
-	return parseHtmlText(htmlText);
+	const cleanedText = htmlText.replace(/<table[\s\S]*?<\/table>/g, "");
+	return parseHtmlText(cleanedText);
 }
 
 async function fetchSingularProperty(
