@@ -18,7 +18,7 @@ export async function fetchArticle(params: {
 		await Bluebird.each(keywords, async (keyword) => {
 			const htmlArticle = await fetchSingularProperty(keyword, "text");
 			params.updateRender(htmlArticle, headerMatch.index);
-			links.push(keyword);
+			links.unshift(keyword);
 			const fetchedLinks = await fetchPluralProperty(keyword, "links");
 			fetchedLinks.forEach((link) => links.push(link));
 		});
@@ -26,7 +26,8 @@ export async function fetchArticle(params: {
 	await Bluebird.each(links, async (link) => {
 		try {
 			const linkedPlainText = await fetchPlainText(link);
-			params.appendTrainingData(`${link}.  ${linkedPlainText}`);
+			const upperCasedLink = link.charAt(0).toUpperCase() + link.slice(1);
+			params.appendTrainingData(`${upperCasedLink}.  ${linkedPlainText}`);
 		} catch (error) {
 			params.reportError(error);
 		}
