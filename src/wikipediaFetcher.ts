@@ -1,20 +1,28 @@
 import * as Bluebird from "bluebird";
 import * as HtmlToText from "html-to-text";
+import * as KeywordExtractor from "keyword-extractor";
 import * as Request from "request-promise";
 import { TextEditorProps } from "./plagiarise";
 
 export async function fetchArticle(params: {
 	textEditorProps: TextEditorProps;
-	updateRender: (render: string, location: number) => void;
+	updateRender: (render: string, location: number | undefined) => void;
 	appendTrainingData: (trainingData: string) => void;
 	reportError: (error: Error) => void;
 }): Promise<void> {
-	const header = params.textEditorProps.title;
-	const htmlText = await fetchSingularProperty(header, "text");
-	params.updateRender(htmlText, 0);
-	const plainText = await fetchPlainText(header);
-	params.appendTrainingData(`${header}.  ${plainText}`);
-	const links = await fetchPluralProperty(header, "links");
+	const links: string[] = [];
+	const headers = params.textEditorProps.text.matchAll(/^#+.+/gm) || [];
+	for (const headerMatch of headers) {
+		const header = headerMatch[0].replace(/^#+/, "").trim();
+		const keywords = KeywordExtractor.extract(header);
+		await Bluebird.each(keywords, async (keyword) => {
+			const htmlArticle = await fetchSingularProperty(keyword, "text");
+			params.updateRender(htmlArticle, headerMatch.index);
+			links.push(keyword);
+			const fetchedLinks = await fetchPluralProperty(keyword, "links");
+			fetchedLinks.forEach((link) => links.push(link));
+		});
+	}
 	await Bluebird.each(links, async (link) => {
 		try {
 			const linkedPlainText = await fetchPlainText(link);

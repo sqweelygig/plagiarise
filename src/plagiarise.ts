@@ -3,9 +3,7 @@ import * as Chalk from "chalk";
 import { fetchArticle as fetchWikipediaArticle } from "./wikipediaFetcher";
 
 export interface TextEditorProps {
-	cursorPosition: number;
 	text: string;
-	title: string;
 	wordCount: number;
 }
 
@@ -55,9 +53,13 @@ class Plagiarise {
 				appendTrainingData: this.makeDataAppender(),
 				reportError: Plagiarise.reportError,
 				textEditorProps: {
-					cursorPosition: 0,
-					text: "",
-					title: "Plagiarism",
+					text: [
+						"# Plagiarism",
+						"## About",
+						'Plagiarism is the "wrongful appropriation" and "stealing and publication" of another author\'s "language, thoughts, ideas, or expressions" and the representation of them as one\'s own original work.',
+						"## Etymology",
+						'In the 1st century, the use of the Latin word "plagiarius" (literally "kidnapper") to denote stealing someone else\'s work was pioneered by the Roman poet Martial, who complained that another poet had "kidnapped his verses".',
+					].join("\r"),
 					wordCount: 50,
 				},
 				updateRender: Plagiarise.updateRender,
