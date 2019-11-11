@@ -1,18 +1,20 @@
 import * as Bluebird from "bluebird";
 import * as HtmlToText from "html-to-text";
 import * as Request from "request-promise";
+import { TextEditorProps } from "./plagiarise";
 
 export async function fetchArticle(params: {
-	header: string;
-	updateRender: (render: string) => void;
+	textEditorProps: TextEditorProps;
+	updateRender: (render: string, location: number) => void;
 	appendTrainingData: (trainingData: string) => void;
 	reportError: (error: Error) => void;
 }): Promise<void> {
-	const htmlText = await fetchSingularProperty(params.header, "text");
-	params.updateRender(htmlText);
+	const header = params.textEditorProps.title;
+	const htmlText = await fetchSingularProperty(header, "text");
+	params.updateRender(htmlText, 0);
 	const plainText = parseHtmlText(htmlText);
-	params.appendTrainingData(`${params.header}.  ${plainText}`);
-	const links = await fetchPluralProperty(params.header, "links");
+	params.appendTrainingData(`${header}.  ${plainText}`);
+	const links = await fetchPluralProperty(header, "links");
 	await Bluebird.each(links, async (link) => {
 		try {
 			const linkedPlainText = await fetchPlainText(link);

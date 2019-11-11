@@ -2,6 +2,13 @@ import * as Bluebird from "bluebird";
 import * as Chalk from "chalk";
 import { fetchArticle as fetchWikipediaArticle } from "./wikipediaFetcher";
 
+export interface TextEditorProps {
+	cursorPosition: number;
+	text: string;
+	title: string;
+	wordCount: number;
+}
+
 class Plagiarise {
 	private static log(params: {
 		error?: boolean;
@@ -46,8 +53,13 @@ class Plagiarise {
 		await Bluebird.props({
 			wikipedia: fetchWikipediaArticle({
 				appendTrainingData: this.makeDataAppender(),
-				header: "plagiarism",
 				reportError: Plagiarise.reportError,
+				textEditorProps: {
+					cursorPosition: 0,
+					text: "",
+					title: "Plagiarism",
+					wordCount: 50,
+				},
 				updateRender: Plagiarise.updateRender,
 			}),
 		});
@@ -85,7 +97,7 @@ class Plagiarise {
 	private makeDataAppender(): (newData: string) => void {
 		return (newData: string) => {
 			Plagiarise.log({
-				detail: newData.split(/\n/, 1)[0],
+				detail: newData.split(/[\r\n]/, 1)[0],
 				headline: "Learnt article:",
 			});
 			this.trainingData.push(newData);
