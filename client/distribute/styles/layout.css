@@ -1,0 +1,33 @@
+body {
+	align-items: center;
+	justify-items: center;
+	display: grid;
+	grid-template-columns: 5rem 1fr 1fr;
+	grid-template-rows: 5rem 1fr 1fr;
+	grid-template-areas:
+		"logo editor marginalia"
+		"text-tools editor marginalia"
+		"tip-tools editor marginalia";
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+	width: 100vw;
+}
+body > div {
+	padding: 1rem;
+}
+.logo {
+	grid-area: logo;
+}
+.tip-tools {
+	grid-area: tip-tools;
+}
+.text-tools {
+	grid-area: text-tools;
+}
+.editor {
+	grid-area: editor;
+}
+.marginalia {
+	grid-area: marginalia;
+}
