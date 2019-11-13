@@ -1,10 +1,9 @@
 {
-	"extends": "../tsconfig.json",
-	"compilerOptions": {
-		"outDir": "build",
-		"rootDir": "source"
-	},
-	"include": [
-		"source/**/*"
-	]
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "build",
+    "rootDir": "source",
+    "lib": ["es6", "dom"]
+  },
+  "include": ["source/**/*"]
 }
