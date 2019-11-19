@@ -7,5 +7,12 @@ export function Editor(props: {
 	editorValue: EditorValue;
 	onChange: (editorValue: EditorValue) => Promise<void>;
 }): React.ReactElement {
-	return <RichTextEditor value={props.editorValue} onChange={props.onChange} />;
+	return (
+		<RichTextEditor
+			value={props.editorValue}
+			onChange={props.onChange}
+			className="editor"
+			placeholder="…"
+		/>
+	);
 }
