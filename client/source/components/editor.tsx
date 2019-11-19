@@ -5,7 +5,7 @@ export { EditorValue };
 
 export function Editor(props: {
 	editorValue: EditorValue;
-	onChange: (editorValue: EditorValue) => Promise<void>;
+	onChange: (editorValue: EditorValue) => void;
 }): React.ReactElement {
 	return (
 		<RichTextEditor

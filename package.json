@@ -29,6 +29,7 @@
     "@types/request-promise": "^4.1.44",
     "bluebird": "^3.7.1",
     "chalk": "^3.0.0",
+    "draft-js": "^0.11.2",
     "express": "^4.17.1",
     "html-to-text": "^5.1.1",
     "keyword-extractor": "0.0.18",

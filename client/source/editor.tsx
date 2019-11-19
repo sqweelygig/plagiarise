@@ -19,7 +19,9 @@ class Editor extends React.Component<{}, { editorValue: EditorValue }> {
 			<Logo key="logo" />,
 			<EditorPane
 				editorValue={this.state.editorValue}
-				onChange={this.encloseEditorUpdater()}
+				onChange={(editorValue) => {
+					this.setState({ editorValue });
+				}}
 				key="editor_pane"
 			/>,
 			<Marginalia
@@ -31,12 +33,6 @@ class Editor extends React.Component<{}, { editorValue: EditorValue }> {
 			<TextTools key="text_tools" />,
 			<TipTools key="tip-tools" />,
 		];
-	}
-
-	private encloseEditorUpdater(): (editorValue: EditorValue) => Promise<void> {
-		return async (editorValue: EditorValue) => {
-			this.setState({ editorValue });
-		};
 	}
 }
 
