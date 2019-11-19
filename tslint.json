@@ -1,12 +1,12 @@
 {
-  "extends": [
-    "tslint:latest",
-    "tslint-config-prettier"
-  ],
+  "extends": ["tslint:latest", "tslint-config-prettier"],
   "rules": {
-    "interface-name": [
+    "interface-name": [true, "never-prefix"],
+    "typedef": [
       true,
-      "never-prefix"
+      "call-signature",
+      "parameter",
+      "member-variable-declaration"
     ]
   }
 }
