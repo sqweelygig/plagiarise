@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "distribute/source",
+    "rootDir": "source",
+    "lib": ["es6", "dom"]
+  },
+  "include": ["source/**/*"]
+}

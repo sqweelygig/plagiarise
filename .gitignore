@@ -1,7 +1,9 @@
 # IDE Files
-.idea/
+/.idea/
 *.iml
 
 # Built files
-node_modules/
-dist/
+/node_modules/
+/dist/
+/client/distribute/source/
+/server/build/

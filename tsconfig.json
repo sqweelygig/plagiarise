@@ -2,20 +2,19 @@
   "compilerOptions": {
     "jsx": "react",
     "lib": [
-      "es2020"
+      "es6"
     ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "outDir": "dist",
     "preserveConstEnums": false,
     "removeComments": true,
     "resolveJsonModule": true,
-    "rootDir": "src",
     "sourceMap": false,
     "strictNullChecks": true,
-    "target": "es2020"
+    "target": "es6",
+    "types": []
   },
   "include": [
     "src/**/*"
