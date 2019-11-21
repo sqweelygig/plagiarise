@@ -1,6 +1,5 @@
 body {
 	align-items: center;
-	justify-items: center;
 	display: grid;
 	grid-template-columns: 5rem 1fr 1fr;
 	grid-template-rows: 5rem 1fr 1fr;
@@ -8,26 +7,31 @@ body {
 		"logo editor marginalia"
 		"text-tools editor marginalia"
 		"tip-tools editor marginalia";
+	box-sizing: border-box;
 	margin: 0;
-	padding: 0;
+	padding: 1rem;
 	height: 100vh;
 	width: 100vw;
 }
 body > div {
 	margin: 1rem;
 }
-.logo {
+body > .logo {
 	grid-area: logo;
 }
-.tip-tools {
+body > .tip-tools {
 	grid-area: tip-tools;
 }
-.text-tools {
+body > .text-tools {
 	grid-area: text-tools;
 }
-.editor {
+body > .editor {
 	grid-area: editor;
 }
-.marginalia {
+body > .marginalia {
 	grid-area: marginalia;
+}
+body > .marginalia > div {
+	border: 1px solid #ddd;
+	padding: 1rem;
 }
