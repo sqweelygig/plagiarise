@@ -24,6 +24,7 @@ body > .text-tools {
 	grid-area: text-tools;
 }
 body > .editor {
+	font-family: sans-serif;
 	grid-area: editor;
 }
 body > .marginalia {
