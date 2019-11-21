@@ -1,11 +1,14 @@
 import * as React from "react";
-import { BrainItem } from "../editor";
+import * as ReactMarkdown from "react-markdown";
+import { BrainEntry } from "../editor";
 
-export function Marginalia(props: { active: BrainItem[] }): React.ReactElement {
+export function Marginalia(props: {
+	active: BrainEntry[];
+}): React.ReactElement {
 	const elements = props.active.map((item, index) => {
 		return (
 			<div key={["marginalia", index].join("_")}>
-				<div>{item.fulltext}</div>
+				<ReactMarkdown source={item.fulltext} />
 				<div className="citation">{item.source}</div>
 			</div>
 		);
