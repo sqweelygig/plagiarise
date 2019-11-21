@@ -5,13 +5,35 @@ import { Logo } from "./components/logo";
 import { Marginalia } from "./components/marginalia";
 import { TextTools } from "./components/text-tools";
 import { TipTools } from "./components/tip-tools";
+import { fetch as fetchFortune } from "./models/fetchers/fortune-cookie";
 
-class Editor extends React.Component<{}, { editorValue: EditorValue }> {
+export interface BrainItem {
+	title?: string;
+	source: string;
+	summary?: string;
+	fulltext: string;
+	text_section?: {
+		start: number;
+		end: number;
+	};
+}
+
+export type BrainAdder = (brainItem: BrainItem) => number | null;
+
+class Editor extends React.Component<
+	{},
+	{ brain: BrainItem[]; editorValue: EditorValue }
+> {
 	constructor(props: {}) {
 		super(props);
 		this.state = {
+			brain: [],
 			editorValue: EditorValue.createEmpty(),
 		};
+	}
+
+	public async componentDidMount(): Promise<void> {
+		await fetchFortune(this.encloseBrainAdder());
 	}
 
 	public render(): React.ReactElement[] {
@@ -25,14 +47,24 @@ class Editor extends React.Component<{}, { editorValue: EditorValue }> {
 				key="editor_pane"
 			/>,
 			<Marginalia
-				before={[<div>Pre 2</div>, <div>Pre 1</div>]}
-				after={[<div>Post 1</div>, <div>Post 2</div>]}
-				active={<div>Active</div>}
+				active={this.state.brain}
 				key="marginalia"
 			/>,
 			<TextTools key="text_tools" />,
 			<TipTools key="tip-tools" />,
 		];
+	}
+
+	private encloseBrainAdder(): BrainAdder {
+		return (brainItem: BrainItem) => {
+			let index = null;
+			this.setState((oldState) => {
+				const brain = oldState.brain.concat([brainItem]);
+				index = brain.length;
+				return { brain };
+			});
+			return index;
+		};
 	}
 }
 

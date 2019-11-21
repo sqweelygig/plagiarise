@@ -13,6 +13,9 @@ body {
 	height: 100vh;
 	width: 100vw;
 }
+body > div {
+	margin: 1rem;
+}
 .logo {
 	grid-area: logo;
 }
@@ -24,7 +27,6 @@ body {
 }
 .editor {
 	grid-area: editor;
-	width: 100%;
 }
 .marginalia {
 	grid-area: marginalia;
