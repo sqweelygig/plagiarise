@@ -34,6 +34,7 @@ class Editor extends React.Component<
 
 	public async componentDidMount(): Promise<void> {
 		await fetchFortune(this.encloseBrainAdder());
+		await fetchFortune(this.encloseBrainAdder());
 	}
 
 	public render(): React.ReactElement[] {
