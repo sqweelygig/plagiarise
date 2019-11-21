@@ -24,19 +24,11 @@ body > .text-tools {
 	grid-area: text-tools;
 }
 body > .editor {
-	font-family: sans-serif;
 	grid-area: editor;
 }
 body > .marginalia {
 	grid-area: marginalia;
 }
 body > .marginalia > div {
-	border: 1px solid #ddd;
-	padding: 1rem;
 	margin: 1rem 0;
-}
-body > .marginalia > div > .citation {
-	text-align: right;
-	color: #888;
-	font-size: 80%;
 }
