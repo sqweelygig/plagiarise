@@ -34,3 +34,8 @@ body > .marginalia > div {
 	padding: 1rem;
 	margin: 1rem 0;
 }
+body > .marginalia > div > .citation {
+	text-align: right;
+	color: #888;
+	font-size: 80%;
+}
