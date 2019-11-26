@@ -1,3 +1,15 @@
 body {
 	font-family: sans-serif;
 }
+body > .editor {
+	font-family: sans-serif;
+}
+body > .marginalia > div {
+	border: 1px solid #ddd;
+	padding: 1rem;
+}
+body > .marginalia > div > .citation {
+	text-align: right;
+	color: #888;
+	font-size: 80%;
+}
