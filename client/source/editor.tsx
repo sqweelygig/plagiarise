@@ -1,7 +1,11 @@
 import { merge } from "lodash";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { EditorValue, EditPane, EditPaneProps } from "./components/editPane";
+import {
+	EditorValue,
+	EditPane,
+	EditPaneValues
+} from "./components/editPane";
 import { Logo } from "./components/logo";
 import { Marginalia, MarginaliaProps } from "./components/marginalia";
 import { TextTools } from "./components/text-tools";
@@ -24,7 +28,7 @@ export interface BrainCitedEntry extends BrainEntry {
 export type BrainWriteCallback = (
 	brainItem: BrainEntry | null,
 	index?: number,
-) => number | undefined;
+) => number;
 
 export interface BrainWriterFunctions {
 	update: BrainWriteCallback;
@@ -38,7 +42,7 @@ interface Brain {
 	brain: BrainCitedEntry[];
 }
 
-type EditorState = EditPaneProps & MarginaliaProps & Brain;
+type EditorState = EditPaneValues & MarginaliaProps & Brain;
 
 class Editor extends React.Component<{}, EditorState> {
 	constructor(props: {}) {
@@ -63,7 +67,7 @@ class Editor extends React.Component<{}, EditorState> {
 				editorIndex={this.state.editorIndex}
 				editorTimeout={this.state.editorTimeout}
 				editorValue={this.state.editorValue}
-				onChange={this.encloseEditorUpdater()}
+				onChange={this.setState.bind(this)}
 				writeToBrain={this.encloseBrainWriters("main editor")}
 				key="editor_pane"
 			/>,
@@ -77,12 +81,6 @@ class Editor extends React.Component<{}, EditorState> {
 		];
 	}
 
-	private encloseEditorUpdater(): (state: EditPaneProps) => void {
-		return (state: EditPaneProps) => {
-			this.setState(state);
-		};
-	}
-
 	private encloseBrainWriters(source: string): BrainWriterFunctions {
 		const update = (entry: BrainEntry, index?: number) => {
 			this.setState((oldState) => {
@@ -93,7 +91,7 @@ class Editor extends React.Component<{}, EditorState> {
 				brain[insert] = merge({ source }, entry);
 				return { brain };
 			});
-			// TODO This doesn't respect that setState might be compound
+			// TODO This doesn't respect that setState might be compounded
 			const state = this.state;
 			const length = state.brain.length;
 			return index && state.brain[index].source === source ? index : length;
