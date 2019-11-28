@@ -1,14 +1,13 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { BrainCitedEntry } from "../components/editor";
+import { BrainValues } from "../models/brain";
 
-export interface MarginaliaProps {
-	brain: BrainCitedEntry[];
+export interface MarginaliaProps extends BrainValues {
 	sourcesToShow: string[];
 }
 
 export function Marginalia(props: MarginaliaProps): React.ReactElement {
-	const brainEntriesToRender = props.brain.filter((entry) => {
+	const brainEntriesToRender = props.brainEntries.filter((entry) => {
 		const hasWords = entry.fulltext.replace(/\W/g, "").length > 0;
 		const inShowList = props.sourcesToShow.some(
 			(source) => entry.source === source,

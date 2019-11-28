@@ -5,45 +5,21 @@ import { Logo } from "../elements/logo";
 import { Marginalia, MarginaliaProps } from "../elements/marginalia";
 import { TextTools } from "../elements/text-tools";
 import { TipTools } from "../elements/tip-tools";
+import {
+	Brain,
+	BrainEntry,
+	BrainValues,
+	BrainWriterFunctions,
+} from "../models/brain";
 import { fetch as fetchFortune } from "../models/fortune-cookie";
 
-export interface BrainEntry {
-	fulltext: string;
-	summary?: string;
-	textSection?: {
-		start: number;
-		end: number;
-	};
-}
-
-export interface BrainCitedEntry extends BrainEntry {
-	source: string;
-}
-
-export type BrainWriteCallback = (
-	brainItem: BrainEntry | null,
-	index?: number,
-) => number;
-
-export interface BrainWriterFunctions {
-	update: BrainWriteCallback;
-}
-
-export type SimpleBrainWriter = (
-	writers: BrainWriterFunctions,
-) => Promise<void>;
-
-interface Brain {
-	brain: BrainCitedEntry[];
-}
-
-type EditorState = EditPaneValues & MarginaliaProps & Brain;
+type EditorState = EditPaneValues & MarginaliaProps & BrainValues;
 
 export class Editor extends React.Component<{}, EditorState> {
 	constructor(props: {}) {
 		super(props);
 		this.state = {
-			brain: [],
+			brainEntries: Brain.createEmpty(),
 			editorValue: EditorValue.createEmpty(),
 			sourcesToShow: ["fortune cookies", "main editor"],
 		};
@@ -67,7 +43,7 @@ export class Editor extends React.Component<{}, EditorState> {
 				key="editor_pane"
 			/>,
 			<Marginalia
-				brain={this.state.brain}
+				brainEntries={this.state.brainEntries}
 				key="marginalia"
 				sourcesToShow={this.state.sourcesToShow}
 			/>,
@@ -79,17 +55,20 @@ export class Editor extends React.Component<{}, EditorState> {
 	private encloseBrainWriters(source: string): BrainWriterFunctions {
 		const update = (entry: BrainEntry, index?: number) => {
 			this.setState((oldState) => {
-				const brain = oldState.brain.concat();
-				const end = brain.length;
+				const brainEntries = oldState.brainEntries.concat();
+				const end = brainEntries.length;
 				// If we were given an index, and that entry is ours, then use the index, otherwise add to the end
-				const insert = index && brain[index].source === source ? index : end;
-				brain[insert] = merge({ source }, entry);
-				return { brain };
+				const insert =
+					index && brainEntries[index].source === source ? index : end;
+				brainEntries[insert] = merge({ source }, entry);
+				return { brainEntries };
 			});
 			// TODO This doesn't respect that setState might be compounded
 			const state = this.state;
-			const length = state.brain.length;
-			return index && state.brain[index].source === source ? index : length;
+			const length = state.brainEntries.length;
+			return index && state.brainEntries[index].source === source
+				? index
+				: length;
 		};
 		return { update };
 	}

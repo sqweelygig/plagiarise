@@ -1,6 +1,6 @@
 import * as CookieJar from "fortune-cookie";
 import { sample } from "lodash";
-import { BrainWriterFunctions, SimpleBrainWriter } from "../components/editor";
+import { BrainWriterFunctions, SimpleBrainWriter } from "./brain";
 
 export const fetch: SimpleBrainWriter = async (
 	writers: BrainWriterFunctions,
