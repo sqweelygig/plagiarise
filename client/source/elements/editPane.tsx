@@ -1,6 +1,6 @@
 import * as React from "react";
 import RichTextEditor, { EditorValue } from "react-rte";
-import { BrainWriterFunctions } from "../editor";
+import { BrainWriterFunctions } from "../components/editor";
 export { EditorValue };
 
 export interface EditPaneValues {

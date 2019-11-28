@@ -1,16 +1,11 @@
 import { merge } from "lodash";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
-import {
-	EditorValue,
-	EditPane,
-	EditPaneValues
-} from "./components/editPane";
-import { Logo } from "./components/logo";
-import { Marginalia, MarginaliaProps } from "./components/marginalia";
-import { TextTools } from "./components/text-tools";
-import { TipTools } from "./components/tip-tools";
-import { fetch as fetchFortune } from "./models/fortune-cookie";
+import { EditorValue, EditPane, EditPaneValues } from "../elements/editPane";
+import { Logo } from "../elements/logo";
+import { Marginalia, MarginaliaProps } from "../elements/marginalia";
+import { TextTools } from "../elements/text-tools";
+import { TipTools } from "../elements/tip-tools";
+import { fetch as fetchFortune } from "../models/fortune-cookie";
 
 export interface BrainEntry {
 	fulltext: string;
@@ -44,7 +39,7 @@ interface Brain {
 
 type EditorState = EditPaneValues & MarginaliaProps & Brain;
 
-class Editor extends React.Component<{}, EditorState> {
+export class Editor extends React.Component<{}, EditorState> {
 	constructor(props: {}) {
 		super(props);
 		this.state = {
@@ -99,5 +94,3 @@ class Editor extends React.Component<{}, EditorState> {
 		return { update };
 	}
 }
-
-ReactDOM.render(<Editor />, document.body);

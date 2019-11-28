@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactMarkdown from "react-markdown";
-import { BrainCitedEntry } from "../editor";
+import { BrainCitedEntry } from "../components/editor";
 
 export interface MarginaliaProps {
 	brain: BrainCitedEntry[];
