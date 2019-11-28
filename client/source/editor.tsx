@@ -21,10 +21,18 @@ export interface BrainCitedEntry extends BrainEntry {
 	source: string;
 }
 
-export type BrainUpdater = (
-	brainItem: BrainEntry,
+export type BrainWriteCallback = (
+	brainItem: BrainEntry | null,
 	index?: number,
 ) => number | undefined;
+
+export interface BrainWriterFunctions {
+	update: BrainWriteCallback;
+}
+
+export type SimpleBrainWriter = (
+	writers: BrainWriterFunctions,
+) => Promise<void>;
 
 interface Brain {
 	brain: BrainCitedEntry[];
@@ -43,8 +51,9 @@ class Editor extends React.Component<{}, EditorState> {
 	}
 
 	public async componentDidMount(): Promise<void> {
-		await fetchFortune(this.encloseBrainUpdater("fortune cookies"));
-		await fetchFortune(this.encloseBrainUpdater("fortune cookies"));
+		const update = this.encloseBrainWriters("fortune cookies");
+		await fetchFortune(update);
+		await fetchFortune(update);
 	}
 
 	public render(): React.ReactElement[] {
@@ -55,7 +64,7 @@ class Editor extends React.Component<{}, EditorState> {
 				editorTimeout={this.state.editorTimeout}
 				editorValue={this.state.editorValue}
 				onChange={this.encloseEditorUpdater()}
-				updateBrain={this.encloseBrainUpdater("main editor")}
+				writeToBrain={this.encloseBrainWriters("main editor")}
 				key="editor_pane"
 			/>,
 			<Marginalia
@@ -74,8 +83,8 @@ class Editor extends React.Component<{}, EditorState> {
 		};
 	}
 
-	private encloseBrainUpdater(source: string): BrainUpdater {
-		return (entry: BrainEntry, index?: number) => {
+	private encloseBrainWriters(source: string): BrainWriterFunctions {
+		const update = (entry: BrainEntry, index?: number) => {
 			this.setState((oldState) => {
 				const brain = oldState.brain.concat();
 				const end = brain.length;
@@ -89,6 +98,7 @@ class Editor extends React.Component<{}, EditorState> {
 			const length = state.brain.length;
 			return index && state.brain[index].source === source ? index : length;
 		};
+		return { update };
 	}
 }
 

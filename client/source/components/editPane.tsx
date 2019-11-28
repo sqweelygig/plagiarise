@@ -1,6 +1,6 @@
 import * as React from "react";
 import RichTextEditor, { EditorValue } from "react-rte";
-import { BrainUpdater } from "../editor";
+import { BrainWriterFunctions } from "../editor";
 
 export { EditorValue };
 
@@ -12,7 +12,7 @@ export interface EditPaneProps {
 
 interface EditPaneEvents {
 	onChange: (state: Partial<EditPaneProps>) => void;
-	updateBrain: BrainUpdater;
+	writeToBrain: BrainWriterFunctions;
 }
 
 export function EditPane(
@@ -22,15 +22,15 @@ export function EditPane(
 		if (props.editorTimeout) {
 			clearTimeout(props.editorTimeout);
 		}
-		const holdingEntry = {
+		const holding = {
 			fulltext: "…",
 		};
-		const editorIndex = props.editorIndex || props.updateBrain(holdingEntry);
+		const editorIndex = props.editorIndex || props.writeToBrain.update(holding);
 		const editorTimeout = setTimeout(() => {
 			const entry = {
 				fulltext: editorValue.toString("markdown"),
 			};
-			props.updateBrain(entry, editorIndex);
+			props.writeToBrain.update(entry, editorIndex);
 		}, 1000);
 		props.onChange({ editorIndex, editorTimeout, editorValue });
 	};
