@@ -1,3 +1,4 @@
+import { merge } from "lodash";
 import * as React from "react";
 import { EditorValue, EditPane, EditPaneValues } from "../elements/editPane";
 import { Logo } from "../elements/logo";
@@ -32,7 +33,7 @@ export class Editor extends React.Component<{}, EditorState> {
 				editorIndex={this.state.editorIndex}
 				editorTimeout={this.state.editorTimeout}
 				editorValue={this.state.editorValue}
-				onChange={this.setState.bind(this)}
+				onChange={this.promisifyAndBindSetState()}
 				writeToBrain={Brain.encloseBrainWriters(this, "main editor")}
 				key="editor_pane"
 			/>,
@@ -44,5 +45,19 @@ export class Editor extends React.Component<{}, EditorState> {
 			<TextTools key="text_tools" />,
 			<TipTools key="tip-tools" />,
 		];
+	}
+
+	private promisifyAndBindSetState(): (
+		state: Partial<EditorState>,
+	) => Promise<EditorState> {
+		return (state: Partial<EditorState>) => {
+			return new Promise<EditorState>((resolve) => {
+				this.setState((oldState: Readonly<EditorState>) => {
+					const newState = merge({}, oldState, state);
+					resolve(newState);
+					return newState;
+				});
+			});
+		};
 	}
 }

@@ -9,7 +9,9 @@ export interface EditPaneValues {
 	editorTimeout?: number;
 }
 
-type EditPaneUpdater = (state: Partial<EditPaneValues>) => void;
+type EditPaneUpdater = (
+	state: Partial<EditPaneValues>,
+) => Promise<EditPaneValues>;
 
 interface EditPaneEvents {
 	onChange: EditPaneUpdater;
@@ -34,34 +36,20 @@ export class EditPane extends React.PureComponent<EditPaneProps> {
 		);
 	}
 
-	private ensureBrainEntry(): number {
-		const holding = {
-			fulltext: "…",
-		};
-		return this.props.editorIndex || this.props.writeToBrain.update(holding);
-	}
-
-	private encloseOnChange(): (editorValue: EditorValue) => void {
-		return (editorValue: EditorValue) => {
+	private encloseOnChange(): (editorValue: EditorValue) => Promise<void> {
+		return async (editorValue: EditorValue) => {
 			if (this.props.editorTimeout) {
 				clearTimeout(this.props.editorTimeout);
 			}
-			const editorIndex = this.ensureBrainEntry();
-			const editorTimeout = setTimeout(
-				this.encloseBrainUpdater(editorValue, editorIndex),
-				1000,
-			);
-			this.props.onChange({ editorIndex, editorTimeout, editorValue });
-		};
-	}
-
-	private encloseBrainUpdater(
-		editorValue: EditorValue,
-		editorIndex: number,
-	): () => void {
-		return () => {
-			const fulltext = editorValue.toString("markdown");
-			this.props.writeToBrain.update({ fulltext }, editorIndex);
+			const editorTimeout = setTimeout(async () => {
+				const fulltext = editorValue.toString("markdown");
+				const editorIndex = await this.props.writeToBrain.update(
+					{ fulltext },
+					this.props.editorIndex,
+				);
+				await this.props.onChange({ editorIndex });
+			}, 1000);
+			await this.props.onChange({ editorTimeout, editorValue });
 		};
 	}
 }

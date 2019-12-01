@@ -8,6 +8,6 @@ export const fetch: SimpleBrainWriter = async (
 	const text = sample(CookieJar);
 	if (text) {
 		const fulltext = '"' + sample(CookieJar) + '"';
-		writers.update({ fulltext });
+		await writers.update({ fulltext });
 	}
 };

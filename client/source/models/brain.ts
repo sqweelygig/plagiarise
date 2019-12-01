@@ -18,13 +18,8 @@ export interface BrainCitedEntry extends BrainEntry {
 	source: string;
 }
 
-export type BrainWriteCallback = (
-	brainItem: BrainEntry | null,
-	index?: number,
-) => number;
-
 export interface BrainWriterFunctions {
-	update: BrainWriteCallback;
+	update: (brainItem: BrainEntry | null, index?: number) => Promise<number>;
 }
 
 export type SimpleBrainWriter = (
@@ -36,19 +31,19 @@ export class Brain {
 		stateStore: React.Component<any, BrainValues>,
 		source: string,
 	): BrainWriterFunctions {
-		const update = (entry: BrainEntry, index?: number) => {
-			stateStore.setState((oldState) => {
-				const entries = oldState.brainEntries.concat();
-				const end = entries.length;
-				// If we were given an index, and that entry is ours, then use the index, otherwise add to the end
-				const insert = index && entries[index].source === source ? index : end;
-				entries[insert] = merge({ source }, entry);
-				return { brainEntries: entries };
+		const update = async (entry: BrainEntry, index?: number) => {
+			return new Promise<number>((resolve) => {
+				stateStore.setState((oldState) => {
+					const entries = oldState.brainEntries.concat();
+					const end = entries.length;
+					// If we were given an index, and that entry is ours, then use the index, otherwise add to the end
+					const i = index;
+					const insert = i && entries[i].source === source ? i : end;
+					entries[insert] = merge({ source }, entry);
+					resolve(insert);
+					return { brainEntries: entries };
+				});
 			});
-			// TODO This doesn't respect that setState might be compounded, and should
-			const ents = stateStore.state.brainEntries;
-			const length = stateStore.state.brainEntries.length;
-			return index && ents[index].source === source ? index : length;
 		};
 		return { update };
 	}
