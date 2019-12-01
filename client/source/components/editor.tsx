@@ -1,4 +1,3 @@
-import { merge } from "lodash";
 import * as React from "react";
 import { EditorValue, EditPane, EditPaneValues } from "../elements/editPane";
 import { Logo } from "../elements/logo";
