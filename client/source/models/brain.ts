@@ -9,7 +9,7 @@ export interface BrainValues {
 export interface BrainEntry {
 	fulltext: string;
 	summary?: string;
-	textSection?: {
+	location?: {
 		start: number;
 		end: number;
 	};

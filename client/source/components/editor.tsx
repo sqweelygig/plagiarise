@@ -7,6 +7,7 @@ import { TextTools } from "../elements/text-tools";
 import { TipTools } from "../elements/tip-tools";
 import { Brain, BrainValues } from "../models/brain";
 import { FortuneCookie } from "../models/integrations/fortune-cookie";
+import { WikipediaSkim } from "../models/integrations/wikipedia-skim";
 
 type EditorState = EditPaneValues & MarginaliaProps & BrainValues;
 
@@ -31,6 +32,11 @@ export class Editor extends React.Component<{}, EditorState> {
 
 	public render(): React.ReactElement[] {
 		return [
+			<WikipediaSkim
+				editorSourceName="main editor"
+				brainEntries={this.state.brainEntries}
+				updateBrain={this.brain.encloseBrainWriter("wikipedia")}
+			/>,
 			<FortuneCookie
 				updateBrain={this.brain.encloseBrainWriter("fortune cookies")}
 			/>,
