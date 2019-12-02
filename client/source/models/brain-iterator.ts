@@ -1,12 +1,10 @@
-import { PureComponent, ReactElement } from "react";
+import { Component, ReactElement } from "react";
 import { BrainValues } from "./brain";
-import { BrainWriterFunctions } from "./brain-writer";
+import { WriterProps } from "./brain-writer";
 
-export type BrainUpdaterProps = BrainWriterFunctions & BrainValues;
+export type IteratorProps = WriterProps & BrainValues;
 
-export abstract class BrainIterator<T> extends PureComponent<
-	T & BrainUpdaterProps
-> {
+export abstract class BrainIterator<T> extends Component<T & IteratorProps> {
 	public render(): null | ReactElement {
 		return null;
 	}

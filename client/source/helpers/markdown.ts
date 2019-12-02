@@ -2,20 +2,18 @@ import * as KeywordExtractor from "keyword-extractor";
 import { BrainEntry } from "../models/brain";
 
 export function extractHeaders(essay: string): BrainEntry[] {
-	const findHeading = /^#+ *.+/g;
-	const returnValue: BrainEntry[] = [];
+	const findHeading = /^#+ *.+/gim;
+	const headers: BrainEntry[] = [];
 	let match = findHeading.exec(essay);
 	while (match) {
-		returnValue.push({
+		headers.push({
+			end: match.index + match[0].length,
 			fulltext: match[0],
-			location: {
-				end: match.index + match[0].length,
-				start: match.index,
-			},
+			start: match.index,
 		});
 		match = findHeading.exec(essay);
 	}
-	return returnValue;
+	return headers;
 }
 
 export function extractKeywords(essay: string): BrainEntry[] {
@@ -30,12 +28,13 @@ export function extractKeywords(essay: string): BrainEntry[] {
 				const match = header.fulltext.match(finder);
 				const offset = match && match.index !== undefined ? match.index : 0;
 				const length = match && match[0] !== undefined ? match[0].length : 0;
-				const start = header.location ? header.location.start + offset : 0;
-				const end = header.location ? start + length : 0;
-				const location = header.location ? { end, start } : undefined;
+				const origin = header.start;
+				const start = origin !== undefined ? origin + offset : undefined;
+				const end = origin !== undefined ? origin + offset + length : undefined;
 				keywordEntries.push({
+					end,
 					fulltext: keyword,
-					location,
+					start,
 				});
 			}
 		});

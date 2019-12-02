@@ -6,13 +6,11 @@ export type BrainWriterFunction = (
 	index?: number,
 ) => Promise<number>;
 
-export interface BrainWriterFunctions {
+export interface WriterProps {
 	updateBrain: BrainWriterFunction;
 }
 
-export abstract class BrainWriter<T> extends PureComponent<
-	T & BrainWriterFunctions
-> {
+export abstract class BrainWriter<T> extends PureComponent<T & WriterProps> {
 	public render(): null | ReactElement {
 		return null;
 	}

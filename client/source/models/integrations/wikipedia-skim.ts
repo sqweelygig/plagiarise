@@ -1,6 +1,8 @@
 import * as Bluebird from "bluebird";
+import { isEqual } from "lodash";
 import * as QueryString from "query-string";
 import { extractKeywords } from "../../helpers/markdown";
+import { BrainEntry, BrainValues } from "../brain";
 import { BrainIterator } from "../brain-iterator";
 
 export interface WikipediaSkimProps {
@@ -51,6 +53,7 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 			.replace(/\s*==\s*$/gim, "")
 			.replace(/\s*=\s*$/gim, "")
 			.replace(/\[\[.*?]]/gim, WikipediaSkim.parseLink)
+			.replace(/\(\)/igm, "")
 			.trim();
 	}
 
@@ -68,11 +71,17 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 		return WikipediaSkim.parseWikitext(wikitext).split(/^#/gim)[0];
 	}
 
-	public async componentDidUpdate(): Promise<void> {
-		const essay = this.props.brainEntries.find((entry) => {
-			return entry.source === this.props.editorSourceName;
+	private static findKeywords(
+		props: WikipediaSkimProps & BrainValues,
+	): BrainEntry[] {
+		const essay = props.brainEntries.find((entry) => {
+			return entry.source === props.editorSourceName;
 		});
-		const keywords = essay ? extractKeywords(essay.fulltext) : [];
+		return essay ? extractKeywords(essay.fulltext) : [];
+	}
+
+	public async componentDidUpdate(): Promise<void> {
+		const keywords = WikipediaSkim.findKeywords(this.props);
 		await Bluebird.map(keywords, async (keyword) => {
 			const article = await WikipediaSkim.fetchProperty(
 				keyword.fulltext,
@@ -80,5 +89,13 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 			);
 			console.log(WikipediaSkim.findFirstSection(article));
 		});
+	}
+
+	public shouldComponentUpdate(
+		nextProps: Readonly<WikipediaSkimProps & BrainValues>,
+	): boolean {
+		const thisKeywords = WikipediaSkim.findKeywords(this.props);
+		const nextKeywords = WikipediaSkim.findKeywords(nextProps);
+		return !isEqual(thisKeywords, nextKeywords);
 	}
 }

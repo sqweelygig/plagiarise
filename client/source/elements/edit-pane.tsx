@@ -1,6 +1,6 @@
 import * as React from "react";
 import RichTextEditor, { EditorValue } from "react-rte";
-import { BrainWriter, BrainWriterFunctions } from "../models/brain-writer";
+import { BrainWriter, WriterProps } from "../models/brain-writer";
 export { EditorValue };
 
 export interface EditPaneValues {
@@ -17,10 +17,10 @@ interface EditPaneEvents {
 	onChange: EditPaneUpdater;
 }
 
-type EditPaneProps = EditPaneEvents & EditPaneValues;
+type EditPaneProps = EditPaneEvents & EditPaneValues & WriterProps;
 
 export class EditPane extends BrainWriter<EditPaneProps> {
-	constructor(props: EditPaneProps & BrainWriterFunctions) {
+	constructor(props: EditPaneProps) {
 		super(props);
 	}
 

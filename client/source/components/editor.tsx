@@ -36,9 +36,11 @@ export class Editor extends React.Component<{}, EditorState> {
 				editorSourceName="main editor"
 				brainEntries={this.state.brainEntries}
 				updateBrain={this.brain.encloseBrainWriter("wikipedia")}
+				key="wikipedia_skim"
 			/>,
 			<FortuneCookie
 				updateBrain={this.brain.encloseBrainWriter("fortune cookies")}
+				key="fortune_cookie"
 			/>,
 			<Logo key="logo" />,
 			<EditPane

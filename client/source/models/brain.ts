@@ -9,10 +9,8 @@ export interface BrainValues {
 export interface BrainEntry {
 	fulltext: string;
 	summary?: string;
-	location?: {
-		start: number;
-		end: number;
-	};
+	start?: number;
+	end?: number;
 }
 
 export interface BrainCitedEntry extends BrainEntry {
