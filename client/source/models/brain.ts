@@ -1,5 +1,5 @@
 import { merge } from "lodash";
-import * as React from "react";
+import { SetState } from "../components/editor";
 
 export interface BrainValues {
 	brainEntries: BrainCitedEntry[];
@@ -18,37 +18,38 @@ export interface BrainCitedEntry extends BrainEntry {
 	source: string;
 }
 
+export type BrainUpdater = (
+	brainItem: BrainEntry | null,
+	index?: number,
+) => Promise<number>;
+
 export interface BrainWriterFunctions {
-	update: (brainItem: BrainEntry | null, index?: number) => Promise<number>;
+	updateBrain: BrainUpdater;
 }
 
-export type SimpleBrainWriter = (
-	writers: BrainWriterFunctions,
-) => Promise<void>;
-
 export class Brain {
-	public static encloseBrainWriters(
-		stateStore: React.Component<any, BrainValues>,
-		source: string,
-	): BrainWriterFunctions {
-		const update = async (entry: BrainEntry, index?: number) => {
+	public static createEmpty(): BrainCitedEntry[] {
+		return [];
+	}
+
+	constructor(private readonly setState: SetState) {}
+
+	public encloseBrainUpdater(source: string): BrainUpdater {
+		return (entry: BrainEntry, index?: number) => {
 			return new Promise<number>((resolve) => {
-				stateStore.setState((oldState) => {
-					const entries = oldState.brainEntries.concat();
-					const end = entries.length;
-					// If we were given an index, and that entry is ours, then use the index, otherwise add to the end
+				this.setState((oldState) => {
+					const brainEntries = [...oldState.brainEntries];
+					const end = brainEntries.length;
 					const i = index;
-					const insert = i && entries[i].source === source ? i : end;
-					entries[insert] = merge({ source }, entry);
-					resolve(insert);
-					return { brainEntries: entries };
+					// If we were given an index, and that entry is ours, then use the index, otherwise add to the end
+					const insert = i && brainEntries[i].source === source ? i : end;
+					brainEntries[insert] = merge({ source }, entry);
+					setTimeout(() => {
+						resolve(insert);
+					}, 0);
+					return { brainEntries };
 				});
 			});
 		};
-		return { update };
-	}
-
-	public static createEmpty(): BrainCitedEntry[] {
-		return [];
 	}
 }

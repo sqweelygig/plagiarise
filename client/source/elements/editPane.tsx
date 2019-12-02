@@ -15,13 +15,12 @@ type EditPaneUpdater = (
 
 interface EditPaneEvents {
 	onChange: EditPaneUpdater;
-	writeToBrain: BrainWriterFunctions;
 }
 
-type EditPaneProps = EditPaneEvents & EditPaneValues;
+type EditPaneProps = EditPaneEvents & EditPaneValues & BrainWriterFunctions;
 
 export class EditPane extends React.PureComponent<EditPaneProps> {
-	constructor(props: EditPaneValues & EditPaneEvents) {
+	constructor(props: EditPaneProps) {
 		super(props);
 	}
 
@@ -43,7 +42,7 @@ export class EditPane extends React.PureComponent<EditPaneProps> {
 			}
 			const editorTimeout = setTimeout(async () => {
 				const fulltext = editorValue.toString("markdown");
-				const editorIndex = await this.props.writeToBrain.update(
+				const editorIndex = await this.props.updateBrain(
 					{ fulltext },
 					this.props.editorIndex,
 				);
