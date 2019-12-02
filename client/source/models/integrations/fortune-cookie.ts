@@ -1,10 +1,9 @@
 import * as CookieJar from "fortune-cookie";
 import { sample } from "lodash";
-import { BrainValues, BrainWriterFunctions } from "../brain";
-import { Integration } from "../integration";
+import { BrainWriter, BrainWriterFunctions } from "../brain-writer";
 
-export class FortuneCookie extends Integration {
-	public constructor(props: BrainValues & BrainWriterFunctions) {
+export class FortuneCookie extends BrainWriter<{}> {
+	public constructor(props: BrainWriterFunctions) {
 		super(props);
 		setTimeout(async () => {
 			const fulltext = '"' + sample(CookieJar) + '"';

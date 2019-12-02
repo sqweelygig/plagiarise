@@ -1,6 +1,6 @@
 import { merge } from "lodash";
 import * as React from "react";
-import { EditorValue, EditPane, EditPaneValues } from "../elements/editPane";
+import { EditorValue, EditPane, EditPaneValues } from "../elements/edit-pane";
 import { Logo } from "../elements/logo";
 import { Marginalia, MarginaliaProps } from "../elements/marginalia";
 import { TextTools } from "../elements/text-tools";
@@ -32,8 +32,7 @@ export class Editor extends React.Component<{}, EditorState> {
 	public render(): React.ReactElement[] {
 		return [
 			<FortuneCookie
-				brainEntries={this.state.brainEntries}
-				updateBrain={this.brain.encloseBrainUpdater("fortune cookies")}
+				updateBrain={this.brain.encloseBrainWriter("fortune cookies")}
 			/>,
 			<Logo key="logo" />,
 			<EditPane
@@ -41,7 +40,7 @@ export class Editor extends React.Component<{}, EditorState> {
 				editorTimeout={this.state.editorTimeout}
 				editorValue={this.state.editorValue}
 				onChange={this.promisifyAndBindSetState()}
-				updateBrain={this.brain.encloseBrainUpdater("main editor")}
+				updateBrain={this.brain.encloseBrainWriter("main editor")}
 				key="editor_pane"
 			/>,
 			<Marginalia

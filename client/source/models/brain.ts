@@ -1,5 +1,6 @@
 import { merge } from "lodash";
 import { SetState } from "../components/editor";
+import { BrainWriterFunction } from "./brain-writer";
 
 export interface BrainValues {
 	brainEntries: BrainCitedEntry[];
@@ -18,15 +19,6 @@ export interface BrainCitedEntry extends BrainEntry {
 	source: string;
 }
 
-export type BrainUpdater = (
-	brainItem: BrainEntry | null,
-	index?: number,
-) => Promise<number>;
-
-export interface BrainWriterFunctions {
-	updateBrain: BrainUpdater;
-}
-
 export class Brain {
 	public static createEmpty(): BrainCitedEntry[] {
 		return [];
@@ -34,7 +26,7 @@ export class Brain {
 
 	constructor(private readonly setState: SetState) {}
 
-	public encloseBrainUpdater(source: string): BrainUpdater {
+	public encloseBrainWriter(source: string): BrainWriterFunction {
 		return (entry: BrainEntry, index?: number) => {
 			return new Promise<number>((resolve) => {
 				this.setState((oldState) => {
