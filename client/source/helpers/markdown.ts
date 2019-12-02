@@ -25,18 +25,18 @@ export function extractKeywords(essay: string): BrainEntry[] {
 		const trimmedText = header.fulltext.replace(/^#*/, "").trim();
 		const keywords = KeywordExtractor.extract(trimmedText);
 		keywords.forEach((keyword) => {
-			const finder = new RegExp(keyword, "ig");
-			let match = finder.exec(header.fulltext);
-			while (match) {
-				const location = header.location && {
-					end: header.location.start + match.index + match[0].length,
-					start: header.location.start + match.index,
-				};
+			if (keyword.trim().length > 1) {
+				const finder = new RegExp(keyword, "i");
+				const match = header.fulltext.match(finder);
+				const offset = match && match.index !== undefined ? match.index : 0;
+				const length = match && match[0] !== undefined ? match[0].length : 0;
+				const start = header.location ? header.location.start + offset : 0;
+				const end = header.location ? start + length : 0;
+				const location = header.location ? { end, start } : undefined;
 				keywordEntries.push({
 					fulltext: keyword,
 					location,
 				});
-				match = finder.exec(header.fulltext);
 			}
 		});
 	});

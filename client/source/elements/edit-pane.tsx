@@ -38,9 +38,9 @@ export class EditPane extends BrainWriter<EditPaneProps> {
 	private encloseOnChange(): (editorValue: EditorValue) => Promise<void> {
 		return async (editorValue: EditorValue) => {
 			if (this.props.editorTimeout) {
-				clearTimeout(this.props.editorTimeout);
+				window.clearTimeout(this.props.editorTimeout);
 			}
-			const editorTimeout = setTimeout(async () => {
+			const editorTimeout = window.setTimeout(async () => {
 				const fulltext = editorValue.toString("markdown");
 				const editorIndex = await this.props.updateBrain(
 					{ fulltext },
