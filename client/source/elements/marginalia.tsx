@@ -15,9 +15,19 @@ export function Marginalia(props: MarginaliaProps): React.ReactElement {
 		return hasWords && inShowList;
 	});
 	const elements = brainEntriesToRender.map((item, index) => {
+		const renderLink = (linkProps: any) => {
+			return (
+				<a href={linkProps.href} target="_blank">
+					{linkProps.children}
+				</a>
+			);
+		};
 		return (
 			<div key={["marginalia", index].join("_")}>
-				<ReactMarkdown source={item.fulltext} />
+				<ReactMarkdown
+					source={item.fulltext}
+					renderers={{ link: renderLink }}
+				/>
 				<div className="citation">{item.source}</div>
 			</div>
 		);

@@ -25,7 +25,7 @@ export class Editor extends React.Component<{}, EditorState> {
 		this.state = {
 			brainEntries: Brain.createEmpty(),
 			editorValue: EditorValue.createEmpty(),
-			sourcesToShow: ["fortune cookies", "main editor"],
+			sourcesToShow: ["fortune cookies", "main editor", "wikipedia"],
 		};
 		this.brain = new Brain(this.setState.bind(this));
 	}

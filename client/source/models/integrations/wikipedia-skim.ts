@@ -1,5 +1,5 @@
 import * as Bluebird from "bluebird";
-import { isEqual } from "lodash";
+import { Dictionary, isEqual } from "lodash";
 import * as QueryString from "query-string";
 import { extractKeywords } from "../../helpers/markdown";
 import { BrainEntry, BrainValues } from "../brain";
@@ -63,7 +63,7 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 			.replace(/]]$/gim, "")
 			.split("|");
 		const plainText = splitMatch[splitMatch.length - 1];
-		const pathText = splitMatch[0].replace(" ", "_");
+		const pathText = splitMatch[0].replace(/ /g, "_");
 		return `[${plainText}](https://en.wikipedia.org/wiki/${pathText})`;
 	}
 
@@ -80,6 +80,8 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 		return essay ? extractKeywords(essay.fulltext) : [];
 	}
 
+	private articleIndexes: Dictionary<number> = {};
+
 	public async componentDidUpdate(): Promise<void> {
 		const keywords = WikipediaSkim.findKeywords(this.props);
 		await Bluebird.map(keywords, async (keyword) => {
@@ -87,7 +89,11 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 				keyword.fulltext,
 				"wikitext",
 			);
-			console.log(WikipediaSkim.findFirstSection(article));
+			this.articleIndexes[keyword.fulltext] = await this.props.updateBrain({
+				end: keyword.end,
+				fulltext: WikipediaSkim.findFirstSection(article),
+				start: keyword.start,
+			}, this.articleIndexes[keyword.fulltext]);
 		});
 	}
 
