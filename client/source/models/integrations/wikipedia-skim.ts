@@ -53,7 +53,7 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 			.replace(/\s*==\s*$/gim, "")
 			.replace(/\s*=\s*$/gim, "")
 			.replace(/\[\[.*?]]/gim, WikipediaSkim.parseLink)
-			.replace(/\(\)/igm, "")
+			.replace(/\(\)/gim, "")
 			.trim();
 	}
 
@@ -75,7 +75,7 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 		props: WikipediaSkimProps & BrainValues,
 	): BrainEntry[] {
 		const essay = props.brainEntries.find((entry) => {
-			return entry.source === props.editorSourceName;
+			return entry && entry.source === props.editorSourceName;
 		});
 		return essay ? extractKeywords(essay.fulltext) : [];
 	}
@@ -83,18 +83,35 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 	private articleIndexes: Dictionary<number> = {};
 
 	public async componentDidUpdate(): Promise<void> {
-		const keywords = WikipediaSkim.findKeywords(this.props);
-		await Bluebird.map(keywords, async (keyword) => {
-			const article = await WikipediaSkim.fetchProperty(
-				keyword.fulltext,
-				"wikitext",
-			);
-			this.articleIndexes[keyword.fulltext] = await this.props.updateBrain({
-				end: keyword.end,
-				fulltext: WikipediaSkim.findFirstSection(article),
-				start: keyword.start,
-			}, this.articleIndexes[keyword.fulltext]);
+		const keywordEntries = WikipediaSkim.findKeywords(this.props);
+		const keywords = keywordEntries.map((keywordEntry) => {
+			return keywordEntry.fulltext;
 		});
+		await Bluebird.all([
+			await Bluebird.map(Object.keys(this.articleIndexes), async (keyword) => {
+				if (keywords.indexOf(keyword) === -1) {
+					await this.props.updateBrain(null, this.articleIndexes[keyword]);
+					delete this.articleIndexes[keyword];
+				}
+			}),
+			await Bluebird.map(keywordEntries, async (keywordEntry) => {
+				const keyword = keywordEntry.fulltext;
+				if (this.articleIndexes[keyword] === undefined) {
+					const article = await WikipediaSkim.fetchProperty(
+						keyword,
+						"wikitext",
+					);
+					this.articleIndexes[keyword] = await this.props.updateBrain(
+						{
+							end: keywordEntry.end,
+							fulltext: WikipediaSkim.findFirstSection(article),
+							start: keywordEntry.start,
+						},
+						this.articleIndexes[keyword],
+					);
+				}
+			}),
+		]);
 	}
 
 	public shouldComponentUpdate(

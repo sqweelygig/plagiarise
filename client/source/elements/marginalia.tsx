@@ -8,9 +8,10 @@ export interface MarginaliaProps extends BrainValues {
 
 export function Marginalia(props: MarginaliaProps): React.ReactElement {
 	const brainEntriesToRender = props.brainEntries.filter((entry) => {
-		const hasWords = entry.fulltext.replace(/\W/g, "").length > 0;
+		const fulltext = entry && entry.fulltext;
+		const hasWords = fulltext && fulltext.replace(/\W/g, "").length > 0;
 		const inShowList = props.sourcesToShow.some(
-			(source) => entry.source === source,
+			(source) => entry && entry.source === source,
 		);
 		return hasWords && inShowList;
 	});
@@ -25,10 +26,10 @@ export function Marginalia(props: MarginaliaProps): React.ReactElement {
 		return (
 			<div key={["marginalia", index].join("_")}>
 				<ReactMarkdown
-					source={item.fulltext}
+					source={item ? item.fulltext : undefined}
 					renderers={{ link: renderLink }}
 				/>
-				<div className="citation">{item.source}</div>
+				<div className="citation">{item ? item.source : undefined}</div>
 			</div>
 		);
 	});
