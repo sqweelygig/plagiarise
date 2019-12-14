@@ -32,16 +32,17 @@ export class Editor extends React.Component<{}, EditorState> {
 	}
 
 	public render(): React.ReactElement[] {
+		const editorEntry = this.state.brainEntries.find((entry) => {
+			return entry && entry.source === "main editor";
+		});
 		return [
 			<WikipediaSkim
-				sourceName="main editor"
-				brainEntries={this.state.brainEntries}
+				brainEntry={editorEntry || null}
 				updateBrain={this.brain.encloseBrainWriter("wikipedia")}
 				key="wikipedia skim"
 			/>,
 			<ProcessWords
-				sourceName="main editor"
-				brainEntries={this.state.brainEntries}
+				brainEntry={editorEntry || null}
 				updateBrain={this.brain.encloseBrainWriter("process words")}
 				key="process words"
 			/>,

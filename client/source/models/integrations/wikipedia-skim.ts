@@ -1,11 +1,10 @@
 import * as Bluebird from "bluebird";
 import { Dictionary, isEqual } from "lodash";
 import * as QueryString from "query-string";
-import { BrainValues, findKeywords, SingleSource } from "../brain";
-import { BrainIterator } from "../brain-iterator";
+import { BrainWriter, SingleSource } from "../brain-writer";
 import { processWordDefinitions } from "./process-words";
 
-export class WikipediaSkim extends BrainIterator<SingleSource> {
+export class WikipediaSkim extends BrainWriter<SingleSource> {
 	private static async fetchResponse(
 		article: string,
 		property: string,
@@ -70,8 +69,8 @@ export class WikipediaSkim extends BrainIterator<SingleSource> {
 	private articleIndexes: Dictionary<number> = {};
 
 	public async componentDidUpdate(): Promise<void> {
-		const rawEntries = findKeywords(this.props);
-		const keywordEntries = rawEntries.filter((entry) => {
+		const allKeywords = WikipediaSkim.extractKeywordsFromProps(this.props);
+		const keywordEntries = allKeywords.filter((entry) => {
 			return (
 				entry.fulltext.trim().length > 0 &&
 				processWordDefinitions[entry.fulltext] === undefined
@@ -107,11 +106,9 @@ export class WikipediaSkim extends BrainIterator<SingleSource> {
 		]);
 	}
 
-	public shouldComponentUpdate(
-		nextProps: Readonly<SingleSource & BrainValues>,
-	): boolean {
-		const thisKeywords = findKeywords(this.props);
-		const nextKeywords = findKeywords(nextProps);
+	public shouldComponentUpdate(nextProps: Readonly<SingleSource>): boolean {
+		const thisKeywords = WikipediaSkim.extractKeywordsFromProps(this.props);
+		const nextKeywords = WikipediaSkim.extractKeywordsFromProps(nextProps);
 		return !isEqual(thisKeywords, nextKeywords);
 	}
 }

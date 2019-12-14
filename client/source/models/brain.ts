@@ -1,6 +1,5 @@
 import { merge } from "lodash";
 import { SetState } from "../components/editor";
-import { extractKeywords } from "../helpers/markdown";
 import { BrainWriterFunction } from "./brain-writer";
 
 export interface BrainValues {
@@ -16,15 +15,6 @@ export interface BrainEntry {
 
 export interface BrainCitedEntry extends BrainEntry {
 	source: string;
-}
-
-export interface SingleSource {
-	sourceName: string;
-}
-
-export function findKeywords(props: SingleSource & BrainValues): BrainEntry[] {
-	const essay = Brain.findEntry(props.brainEntries, props.sourceName);
-	return essay ? extractKeywords(essay.fulltext) : [];
 }
 
 export class Brain {
