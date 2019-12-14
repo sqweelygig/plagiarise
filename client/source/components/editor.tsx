@@ -7,6 +7,7 @@ import { TextTools } from "../elements/text-tools";
 import { TipTools } from "../elements/tip-tools";
 import { Brain, BrainValues } from "../models/brain";
 import { FortuneCookie } from "../models/integrations/fortune-cookie";
+import { ProcessWords } from "../models/integrations/process-words";
 import { WikipediaSkim } from "../models/integrations/wikipedia-skim";
 
 type EditorState = EditPaneValues & MarginaliaProps & BrainValues;
@@ -25,7 +26,7 @@ export class Editor extends React.Component<{}, EditorState> {
 		this.state = {
 			brainEntries: Brain.createEmpty(),
 			editorValue: EditorValue.createEmpty(),
-			sourcesToShow: ["fortune cookies", "main editor", "wikipedia"],
+			sourcesToShow: ["fortune cookies", "process words", "wikipedia"],
 		};
 		this.brain = new Brain(this.setState.bind(this));
 	}
@@ -33,14 +34,20 @@ export class Editor extends React.Component<{}, EditorState> {
 	public render(): React.ReactElement[] {
 		return [
 			<WikipediaSkim
-				editorSourceName="main editor"
+				sourceName="main editor"
 				brainEntries={this.state.brainEntries}
 				updateBrain={this.brain.encloseBrainWriter("wikipedia")}
-				key="wikipedia_skim"
+				key="wikipedia skim"
+			/>,
+			<ProcessWords
+				sourceName="main editor"
+				brainEntries={this.state.brainEntries}
+				updateBrain={this.brain.encloseBrainWriter("process words")}
+				key="process words"
 			/>,
 			<FortuneCookie
 				updateBrain={this.brain.encloseBrainWriter("fortune cookies")}
-				key="fortune_cookie"
+				key="fortune cookie"
 			/>,
 			<Logo key="logo" />,
 			<EditPane
@@ -49,15 +56,15 @@ export class Editor extends React.Component<{}, EditorState> {
 				editorValue={this.state.editorValue}
 				onChange={this.promisifyAndBindSetState()}
 				updateBrain={this.brain.encloseBrainWriter("main editor")}
-				key="editor_pane"
+				key="editor pane"
 			/>,
 			<Marginalia
 				brainEntries={this.state.brainEntries}
 				key="marginalia"
 				sourcesToShow={this.state.sourcesToShow}
 			/>,
-			<TextTools key="text_tools" />,
-			<TipTools key="tip-tools" />,
+			<TextTools key="text tools" />,
+			<TipTools key="tip tools" />,
 		];
 	}
 

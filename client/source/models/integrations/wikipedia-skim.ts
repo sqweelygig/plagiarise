@@ -1,15 +1,11 @@
 import * as Bluebird from "bluebird";
 import { Dictionary, isEqual } from "lodash";
 import * as QueryString from "query-string";
-import { extractKeywords } from "../../helpers/markdown";
-import { BrainEntry, BrainValues } from "../brain";
+import { BrainValues, findKeywords, SingleSource } from "../brain";
 import { BrainIterator } from "../brain-iterator";
+import { processWordDefinitions } from "./process-words";
 
-export interface WikipediaSkimProps {
-	editorSourceName: string;
-}
-
-export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
+export class WikipediaSkim extends BrainIterator<SingleSource> {
 	private static async fetchResponse(
 		article: string,
 		property: string,
@@ -71,19 +67,16 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 		return WikipediaSkim.parseWikitext(wikitext).split(/^#/gim)[0];
 	}
 
-	private static findKeywords(
-		props: WikipediaSkimProps & BrainValues,
-	): BrainEntry[] {
-		const essay = props.brainEntries.find((entry) => {
-			return entry && entry.source === props.editorSourceName;
-		});
-		return essay ? extractKeywords(essay.fulltext) : [];
-	}
-
 	private articleIndexes: Dictionary<number> = {};
 
 	public async componentDidUpdate(): Promise<void> {
-		const keywordEntries = WikipediaSkim.findKeywords(this.props);
+		const rawEntries = findKeywords(this.props);
+		const keywordEntries = rawEntries.filter((entry) => {
+			return (
+				entry.fulltext.trim().length > 0 &&
+				processWordDefinitions[entry.fulltext] === undefined
+			);
+		});
 		const keywords = keywordEntries.map((keywordEntry) => {
 			return keywordEntry.fulltext;
 		});
@@ -115,10 +108,10 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 	}
 
 	public shouldComponentUpdate(
-		nextProps: Readonly<WikipediaSkimProps & BrainValues>,
+		nextProps: Readonly<SingleSource & BrainValues>,
 	): boolean {
-		const thisKeywords = WikipediaSkim.findKeywords(this.props);
-		const nextKeywords = WikipediaSkim.findKeywords(nextProps);
+		const thisKeywords = findKeywords(this.props);
+		const nextKeywords = findKeywords(nextProps);
 		return !isEqual(thisKeywords, nextKeywords);
 	}
 }
