@@ -36,19 +36,17 @@
     "keyword-extractor": "0.0.18",
     "lodash": "^4.17.15",
     "prettier": "^1.18.2",
+    "query-string": "^6.9.0",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-markdown": "^4.2.2",
     "react-rte": "^0.16.1",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.5",
     "ts-loader": "^6.2.1",
     "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.2",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "wikiapi": "^1.7.0"
+    "webpack-cli": "^3.3.10"
   },
   "engines": {
     "node": "^12.11.1"

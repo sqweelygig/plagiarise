@@ -2,7 +2,7 @@ const Path = require("path");
 
 module.exports = {
 	entry: {
-		editor: Path.join(__dirname, "source", "editor.tsx"),
+		editor: Path.join(__dirname, "source", "init-editor.tsx"),
 	},
 	mode: "development",
 	module: {
