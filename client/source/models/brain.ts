@@ -22,6 +22,16 @@ export class Brain {
 		return [];
 	}
 
+	public static findEntry(
+		entries: Array<BrainCitedEntry | null>,
+		source: string,
+	): BrainEntry | undefined {
+		const needle = entries.find((entry) => {
+			return entry && entry.source === source;
+		});
+		return needle || undefined;
+	}
+
 	constructor(private readonly setState: SetState) {}
 
 	public encloseBrainWriter(source: string): BrainWriterFunction {

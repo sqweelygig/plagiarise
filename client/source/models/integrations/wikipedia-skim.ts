@@ -1,15 +1,10 @@
 import * as Bluebird from "bluebird";
 import { Dictionary, isEqual } from "lodash";
 import * as QueryString from "query-string";
-import { extractKeywords } from "../../helpers/markdown";
-import { BrainEntry, BrainValues } from "../brain";
-import { BrainIterator } from "../brain-iterator";
+import { BrainWriter, SingleSource } from "../brain-writer";
+import { processWordDefinitions } from "./process-words";
 
-export interface WikipediaSkimProps {
-	editorSourceName: string;
-}
-
-export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
+export class WikipediaSkim extends BrainWriter<SingleSource> {
 	private static async fetchResponse(
 		article: string,
 		property: string,
@@ -71,19 +66,16 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 		return WikipediaSkim.parseWikitext(wikitext).split(/^#/gim)[0];
 	}
 
-	private static findKeywords(
-		props: WikipediaSkimProps & BrainValues,
-	): BrainEntry[] {
-		const essay = props.brainEntries.find((entry) => {
-			return entry && entry.source === props.editorSourceName;
-		});
-		return essay ? extractKeywords(essay.fulltext) : [];
-	}
-
 	private articleIndexes: Dictionary<number> = {};
 
 	public async componentDidUpdate(): Promise<void> {
-		const keywordEntries = WikipediaSkim.findKeywords(this.props);
+		const allKeywords = WikipediaSkim.extractKeywordsFromProps(this.props);
+		const keywordEntries = allKeywords.filter((entry) => {
+			return (
+				entry.fulltext.trim().length > 0 &&
+				processWordDefinitions[entry.fulltext] === undefined
+			);
+		});
 		const keywords = keywordEntries.map((keywordEntry) => {
 			return keywordEntry.fulltext;
 		});
@@ -114,11 +106,9 @@ export class WikipediaSkim extends BrainIterator<WikipediaSkimProps> {
 		]);
 	}
 
-	public shouldComponentUpdate(
-		nextProps: Readonly<WikipediaSkimProps & BrainValues>,
-	): boolean {
-		const thisKeywords = WikipediaSkim.findKeywords(this.props);
-		const nextKeywords = WikipediaSkim.findKeywords(nextProps);
+	public shouldComponentUpdate(nextProps: Readonly<SingleSource>): boolean {
+		const thisKeywords = WikipediaSkim.extractKeywordsFromProps(this.props);
+		const nextKeywords = WikipediaSkim.extractKeywordsFromProps(nextProps);
 		return !isEqual(thisKeywords, nextKeywords);
 	}
 }

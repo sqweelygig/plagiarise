@@ -47,7 +47,7 @@ export class EditPane extends BrainWriter<EditPaneProps> {
 					this.props.editorIndex,
 				);
 				await this.props.onChange({ editorIndex });
-			}, 1000);
+			}, 400);
 			await this.props.onChange({ editorTimeout, editorValue });
 		};
 	}

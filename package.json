@@ -10,8 +10,8 @@
     "build_server": "tsc -p server/tsconfig.json",
     "iterate": "npm run lint && npm run build && node --version && npm run start",
     "lint": "yarn run lint_tslint && yarn run lint_prettier",
-    "lint_prettier": "./node_modules/prettier/bin-prettier.js {client,server}/source/**/* --check --write",
-    "lint_tslint": "./node_modules/tslint/bin/tslint {client,server}/source/**/*.{ts,tsx} --fix --force",
+    "lint_prettier": "./node_modules/prettier/bin-prettier.js '{client,server}/source/**/*.{ts,tsx}' --check --write",
+    "lint_tslint": "./node_modules/tslint/bin/tslint '{client,server}/source/**/*.{ts,tsx}' --fix --force",
     "postinstall": "npm run build",
     "start": "node .",
     "test": "echo \"Error: no test specified\" && exit 1"
