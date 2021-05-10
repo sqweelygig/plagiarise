@@ -34,7 +34,7 @@
     "fortune-cookie": "0.0.1",
     "html-to-text": "^5.1.1",
     "keyword-extractor": "0.0.18",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.21",
     "prettier": "^1.19.1",
     "query-string": "^6.9.0",
     "react": "^16.12.0",
